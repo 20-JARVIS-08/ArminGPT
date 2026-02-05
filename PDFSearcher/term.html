@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Term Files</title>
+    <style>
+        /* پایه */
+        body,
+        html {
+            margin: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #eee;
+        }
+
+        /* لایه اصلی */
+        .layout {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+        }
+
+        /* سایدبار */
+        .sidebar {
+            width: 220px;
+            background: #2a2a2a;
+            padding: 10px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar b {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .sidebar div {
+            cursor: pointer;
+            padding: 10px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+
+        .sidebar div:hover {
+            background: #444;
+        }
+
+        /* بخش اصلی */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+        }
+
+        /* منوی بالایی */
+        .buttons {
+            padding: 12px;
+            background: #2a2a2a;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .buttons button {
+            background: #444;
+            color: #eee;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-size: 0.95rem;
+        }
+
+        .buttons button:hover {
+            background: #666;
+            transform: translateY(-1px);
+        }
+
+        .buttons input {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #555;
+            background: #1e1e1e;
+            color: #eee;
+            flex: 1;
+            min-width: 150px;
+            font-size: 0.95rem;
+        }
+
+        /* PDF */
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+        }
+
+        /* ریسپانسیو برای موبایل */
+        @media (max-width: 768px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                gap: 6px;
+                padding: 50px;
+            }
+
+            .sidebar div {
+                flex: 0 0 auto;
+                padding: 12px 16px;
+                font-size: 1.1rem;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .buttons button,
+            .buttons input {
+                width: 100%;
+                font-size: 1.25rem;
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+
+        <div class="sidebar" id="fileList">
+            <b>Files</b>
+        </div>
+
+        <div class="main">
+            <div class="buttons">
+                <button onclick="loadFiles('midterm')">Midterm</button>
+                <button onclick="loadFiles('final')">Final</button>
+                <input id="searchInput" placeholder="Search text">
+                <button onclick="searchInPDF()">Search</button>
+                <button onclick="nextResultPDF()">Next Result</button>
+            </div>
+
+
+            <iframe id="pdfFrame"></iframe>
+        </div>
+
+    </div>
+
+    <script src="js/term.js"></script>
+</body>
+
+</html>
