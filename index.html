@@ -10,7 +10,6 @@
             overflow: hidden;
         }
 
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -190,7 +189,6 @@
         #mobileOverlay {
             position: fixed;
             inset: 0;
-            /* background: black; */
             background: #fc69b0;
             display: flex;
             align-items: center;
@@ -204,7 +202,6 @@
         #mobileOverlay.active {
             opacity: 1;
             pointer-events: all;
-            /* border-radius: 50px; */
         }
 
         #coinImg {
@@ -241,7 +238,6 @@
                 display: none;
             }
         }
-
 
         @media (max-width: 600px) {
             .icons {
@@ -334,9 +330,9 @@
     <nav>
         <div class="logo">ArminGPT</div>
         <ul>
-            <li><a href="/Contact/Contact.html">Contact</a></li>
+            <li><a href="Contact/Contact.html">Contact</a></li>
             <li><a href="#iconsSection">Services</a></li>
-            <li><a href="#">Home</a></li>
+            <li><a href="index.html">Home</a></li>
         </ul>
     </nav>
 
@@ -346,10 +342,10 @@
         <div class="flip-card" onclick="goDown()">
             <div class="flip-inner">
                 <div class="flip-front">
-                    <img src="/images/photo_2025-06-11_00-01-15.jpg" alt="front">
+                    <img src="images/photo_2025-06-11_00-01-15.jpg" alt="front">
                 </div>
                 <div class="flip-back">
-                    <img src="/images/photo_2025-06-11_00-01-15-back.jpg" alt="back">
+                    <img src="images/photo_2025-06-11_00-01-15-back.jpg" alt="back">
                 </div>
             </div>
         </div>
@@ -358,21 +354,21 @@
     <section class="section" id="iconsSection">
         <p>CHOOSE YOUR SERVICE</p>
         <div class="icons">
-            <div class="icon-block"><img src="/images/download (1).png"></div>
+            <div class="icon-block"><img src="images/download (1).png"></div>
             <a href="ChatBot/index.html">
-                <div class="icon-box"><img src="/images/download (2).png"></div>
+                <div class="icon-box"><img src="images/download (2).png"></div>
             </a>
-            <a href="/PDFSearcher/index.html">
-                <div class="icon-box"><img src="/images/download.png"></div>
+            <a href="PDFSearcher/index.html">
+                <div class="icon-box"><img src="images/download.png"></div>
             </a>
-            <div class="icon-block"><img src="/images/download (1).png"></div>
-            <div class="icon-block"><img src="/images/download (1).png"></div>
-            <div class="icon-block"><img src="/images/download (1).png"></div>
+            <div class="icon-block"><img src="images/download (1).png"></div>
+            <div class="icon-block"><img src="images/download (1).png"></div>
+            <div class="icon-block"><img src="images/download (1).png"></div>
         </div>
     </section>
 
     <div id="mobileOverlay">
-        <img id="coinImg" src="/images/photo_2025-06-11_00-01-15-back.jpg" />
+        <img id="coinImg" src="images/photo_2025-06-11_00-01-15-back.jpg" />
     </div>
 
     <script>
@@ -399,7 +395,7 @@
                     overlay.classList.remove("active");
                     coin.classList.remove("animate");
 
-                    document.body.classList.remove('no-scroll'); // بعد از انیمیشن اسکرول فعال میشه
+                    document.body.classList.remove('no-scroll');
                 }, 1700);
             } else {
                 document.getElementById('iconsSection').scrollIntoView({
@@ -408,18 +404,12 @@
             }
         }
 
-
-        window.onload = () => window.scrollTo(0, 0);
-        window.onbeforeunload = () => window.scrollTo(0, 0);
-
-
         window.onload = () => {
             window.scrollTo(0, 0);
-            document.body.classList.add('no-scroll'); // جلوگیری از اسکرول قبل از کلیک
+            document.body.classList.add('no-scroll');
         };
-
+        window.onbeforeunload = () => window.scrollTo(0, 0);
     </script>
-
 
 </body>
 
