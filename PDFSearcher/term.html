@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Term Files</title>
+    <!-- زوم کمتر روی موبایل -->
+    <meta name="viewport" content="width=device-width, initial-scale=0.85">
     <style>
         /* پایه */
         body,
@@ -25,7 +27,8 @@
         /* سایدبار */
         .sidebar {
             width: 220px;
-            background: #2a2a2a;
+            background: #1e1e1e;
+            /* رنگ ثابت */
             padding: 10px;
             overflow-y: auto;
             flex-shrink: 0;
@@ -37,21 +40,24 @@
         .sidebar b {
             display: block;
             margin-bottom: 10px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            /* کمی کوچکتر */
             color: #fff;
         }
 
         .sidebar div {
             cursor: pointer;
-            padding: 10px 8px;
+            padding: 8px 6px;
+            /* کمی جمع و جورتر */
             border-radius: 6px;
             transition: background 0.2s;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
+            /* فونت کوچکتر */
             color: #ddd;
         }
 
         .sidebar div:hover {
-            background: #444;
+            background: #333;
         }
 
         /* بخش اصلی */
@@ -64,40 +70,43 @@
 
         /* منوی بالایی */
         .buttons {
-            padding: 12px;
-            background: #2a2a2a;
+            padding: 10px;
+            background: #1e1e1e;
+            /* هم رنگ با سایدبار */
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             justify-content: flex-start;
         }
 
         .buttons button {
-            background: #444;
+            background: #333;
             color: #eee;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 12px;
+            /* جمع و جورتر */
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         .buttons button:hover {
-            background: #666;
+            background: #555;
             transform: translateY(-1px);
         }
 
         .buttons input {
-            padding: 8px 12px;
+            padding: 6px 10px;
+            /* کوچک‌تر */
             border-radius: 6px;
             border: 1px solid #555;
             background: #1e1e1e;
             color: #eee;
             flex: 1;
-            min-width: 150px;
-            font-size: 0.95rem;
+            min-width: 120px;
+            font-size: 0.85rem;
         }
 
         /* PDF */
@@ -111,6 +120,8 @@
         @media (max-width: 768px) {
             .layout {
                 flex-direction: column;
+                align-items: center;
+                /* وسط چین کردن کل لایه */
             }
 
             .sidebar {
@@ -118,27 +129,33 @@
                 flex-direction: row;
                 overflow-x: auto;
                 gap: 6px;
-                padding: 50px;
+                /* padding: 20px; */
+                justify-content: center;
+                /* وسط چین کردن لینک‌ها */
             }
 
             .sidebar div {
                 flex: 0 0 auto;
-                padding: 12px 16px;
-                font-size: 1.1rem;
+                padding: 8px 12px;
+                font-size: 0.95rem;
             }
 
             .buttons {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-                padding: 12px;
+                /* flex-direction: column; */
+                align-items: center;
+                /* وسط چین کردن دکمه‌ها */
+                gap: 10px;
+                /* padding: 12px; */
+                /* width: 100%; */
             }
 
             .buttons button,
             .buttons input {
-                width: 100%;
-                font-size: 1.25rem;
-                padding: 16px 20px;
+                width: auto;
+                /* با توجه به متن، بزرگ نشه */
+                min-width: 150px;
+                font-size: 1rem;
+                padding: 12px 16px;
             }
         }
     </style>
@@ -159,7 +176,6 @@
                 <button onclick="searchInPDF()">Search</button>
                 <button onclick="nextResultPDF()">Next Result</button>
             </div>
-
 
             <iframe id="pdfFrame"></iframe>
         </div>
