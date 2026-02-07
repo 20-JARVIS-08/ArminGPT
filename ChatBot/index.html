@@ -30,7 +30,6 @@
             height: 100vh;
         }
 
-        /* sidebar */
         .sidebar {
             width: 260px;
             background: var(--panel);
@@ -45,14 +44,12 @@
             cursor: pointer;
         }
 
-        /* main */
         .main {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
 
-        /* chat */
         .chat {
             flex: 1;
             overflow-y: auto;
@@ -93,7 +90,6 @@
             border-radius: 8px;
         }
 
-        /* input */
         .input-area {
             padding: 20px;
             border-top: 1px solid var(--border);
@@ -104,7 +100,7 @@
             border-radius: 12px;
             display: flex;
             padding: 12px;
-            border: 1.5px rgb(133, 130, 130) solid;
+            border: 1.5px solid #858282;
         }
 
         input {
@@ -124,7 +120,6 @@
             cursor: pointer;
         }
 
-        /* ===== Responsive ===== */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -132,10 +127,6 @@
 
             .sidebar {
                 width: 100%;
-            }
-
-            .main {
-                flex: 1;
             }
 
             .msg {
@@ -147,20 +138,15 @@
             }
         }
 
-        /* ===== Overlay responsive ===== */
         #overlay img {
             max-width: 80%;
-            /* حداکثر عرض 80٪ صفحه */
             max-height: 60%;
-            /* حداکثر ارتفاع 60٪ صفحه */
-            width: auto;
-            height: auto;
         }
 
         @media (max-width: 480px) {
             #overlay img {
-                max-width: 90%;
-                max-height: 50%;
+                max-width: 95%;
+                max-height: 90%;
             }
         }
     </style>
@@ -169,32 +155,56 @@
 <body>
 
     <div class="sidebar">
-        <div class="new-chat" onclick="newChat()">+ New chat</div>
+        <div class="new-chat" onclick="openConfirm()">+ New chat</div>
     </div>
 
     <div class="main">
-
         <div class="chat" id="chat"></div>
 
         <div class="input-area">
             <div class="input-box">
-                <input id="text" placeholder="Send a message..."/>
-                <button onclick="send()" style="color: white;">➤</button>
+                <input id="text" placeholder="Send a message..." />
+                <button onclick="send()" style="color:white;">➤</button>
             </div>
         </div>
-
     </div>
-    <!-- overlay for new chat -->
+
+    <!-- overlay -->
     <div id="overlay" style="
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.6);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:999;
-    ">
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.6);
+        display:none;
+        align-items:center;
+        justify-content:center;
+        z-index:999;">
         <img src="newchat.png" style="width:500px;border-radius:12px;">
+    </div>
+
+    <!-- confirm -->
+    <div id="confirmBox" style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.7);
+        display:none;
+        align-items:center;
+        justify-content:center;
+        z-index:1000;">
+        <div style="
+            background:#202123;
+            padding:20px;
+            border-radius:12px;
+            width:90%;
+            max-width:320px;
+            text-align:center;">
+            <p style="margin-bottom:20px;">Start a new chat?</p>
+            <div style="display:flex;gap:10px;justify-content:center;">
+                <button onclick="confirmNo()"
+                    style="padding:3px 20px;border-radius:8px;background:#444;color:white;">No</button>
+                <button onclick="confirmYes()"
+                    style="padding:3px 20px;border-radius:8px;background:#19c37d;color:black;">Yes</button>
+            </div>
+        </div>
     </div>
 
     <audio id="sound" src="reply.mp3"></audio>
@@ -203,19 +213,20 @@
         const chat = document.getElementById("chat");
         const input = document.getElementById("text");
         const sound = document.getElementById("sound");
+        const overlay = document.getElementById("overlay");
+        const confirmBox = document.getElementById("confirmBox");
+
+        let clearAfterSound = false;
 
         function addMsg(type, text, img = false) {
             const div = document.createElement("div");
             div.className = "msg " + type;
-
             div.innerHTML = `
-    <div class="avatar">${type === "user" ? "U" : "A"}</div>
-    <div class="content">
-      ${text}
-      ${img ? '<img src="bot.png">' : ''}
-    </div>
-  `;
-
+                <div class="avatar">${type === "user" ? "U" : "A"}</div>
+                <div class="content">
+                    ${text}
+                    ${img ? '<img src="bot.png">' : ''}
+                </div>`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
         }
@@ -229,44 +240,45 @@
             setTimeout(() => {
                 addMsg("bot", "Thinking…", true);
                 sound.currentTime = 0;
-                sound.play();
+                sound.play().catch(() => { });
             }, 700);
         }
 
-        const overlay = document.getElementById("overlay");
+        function openConfirm() {
+            confirmBox.style.display = "flex";
+        }
 
-        function newChat() {
-            // پاک کردن چت
-            chat.innerHTML = "";
+        function confirmNo() {
+            confirmBox.style.display = "none";
+        }
 
-            // نمایش افکت
+        function confirmYes() {
+            confirmBox.style.display = "none";
             overlay.style.display = "flex";
 
-            sound.pause();
+            clearAfterSound = true;
+
             sound.currentTime = 0;
-
-            const p = sound.play();
-            if (p) p.catch(() => { });
-
-            sound.onended = () => {
-                overlay.style.display = "none";
-            };
+            sound.play().catch(() => { });
         }
-        input.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" && input.value.trim() !== "") {
-                e.preventDefault(); // نذار فرم یا send اجرا بشه
 
-                sound.pause();
+        sound.onended = () => {
+            overlay.style.display = "none";
+
+            if (clearAfterSound) {
+                chat.innerHTML = "";
+                clearAfterSound = false;
+            }
+        };
+
+        input.addEventListener("keydown", e => {
+            if (e.key === "Enter" && input.value.trim()) {
+                e.preventDefault();
                 sound.currentTime = 0;
-
-                const p = sound.play();
-                if (p) p.catch(() => { });
+                sound.play().catch(() => { });
             }
         });
-
-
     </script>
-
 
 </body>
 
