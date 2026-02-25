@@ -7,7 +7,7 @@ const TERM = "term1";
 // آرایه فایل‌ها داخل هر امتحان
 const files = {
     midterm: ["midterm.pdf"],        // پوشه data/term1/midterm/
-    final: ["final1.pdf", "final2.pdf", "final3.pdf"] // پوشه data/term1/final/
+    final: ["final.pdf"]             // فقط یک فایل نهایی
 };
 
 // بارگذاری لیست فایل‌ها
