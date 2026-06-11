@@ -8,13 +8,13 @@
     <style>
         :root {
             --gold: #f5c842;
-            --white: #f8f8f8;
             --text: #e8dcc8;
-            --muted: rgba(232, 220, 200, 0.45);
+            --muted: rgba(232, 220, 200, 0.4);
             --red: #e63946;
-            --hud-bg: rgba(10, 6, 2, 0.82);
-            --hud-border: rgba(255, 255, 255, 0.08);
-            --r: 10px;
+            --green: #7df9a1;
+            --bg: #0d0a06;
+            --hud: rgba(8, 5, 2, 0.88);
+            --border: rgba(255, 255, 255, 0.09);
         }
 
         *,
@@ -27,96 +27,324 @@
 
         html,
         body {
-            background: #0d0a06;
-            font-family: 'Georgia', serif;
+            background: var(--bg);
+            font-family: system-ui, sans-serif;
             color: var(--text);
+            width: 100%;
             height: 100%;
             overflow: hidden;
             touch-action: none;
-            user-select: none
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
+        /* ── rotate overlay ── */
+        #rotate-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #0d0a06;
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        #rotate-overlay.show {
+            display: flex
+        }
+
+        .rotate-icon {
+            font-size: 80px;
+            animation: rotateAnim 2s ease-in-out infinite;
+            display: block;
+            transform-origin: center;
+        }
+
+        @keyframes rotateAnim {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            25% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            55% {
+                transform: rotate(90deg) scale(1.05);
+            }
+
+            80% {
+                transform: rotate(90deg) scale(1);
+            }
+
+            100% {
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
+        .rotate-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--gold);
+            text-align: center;
+            letter-spacing: .5px;
+        }
+
+        .rotate-sub {
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .rotate-arrows {
+            font-size: 32px;
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: .4
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+        /* ── app ── */
         #app {
             display: flex;
             flex-direction: column;
+            width: 100%;
             height: 100dvh;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 8px;
-            gap: 6px
+            padding: env(safe-area-inset-top, 6px) env(safe-area-inset-right, 6px) env(safe-area-inset-bottom, 6px) env(safe-area-inset-left, 6px);
         }
 
         #hud {
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--hud-bg);
-            border: .5px solid var(--hud-border);
-            border-radius: var(--r);
-            padding: 7px 14px;
+            background: var(--hud);
+            border-bottom: .5px solid var(--border);
+            padding: 6px 12px;
             gap: 8px;
-            flex-shrink: 0
         }
 
         .hud-group {
             display: flex;
-            gap: 14px
+            gap: 14px;
+            align-items: center
         }
 
         .stat {
             text-align: center
         }
 
-        .stat-label {
-            font-size: 9px;
+        .stat-lbl {
+            font-size: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: .6px;
             color: var(--muted);
-            font-family: system-ui
+            line-height: 1
         }
 
-        .stat-val {
-            font-size: 18px;
+        .stat-n {
+            font-size: 19px;
             font-weight: 700;
-            line-height: 1.1;
-            color: var(--gold);
-            font-family: system-ui
+            line-height: 1.15;
+            color: var(--gold)
         }
 
-        .stat-val.white {
-            color: var(--white)
+        .stat-n.w {
+            color: #f8f8f8
         }
 
-        .stat-val.green {
-            color: #7df9a1
+        .stat-n.g {
+            color: var(--green)
         }
 
         #logo {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
-            letter-spacing: -.3px;
-            color: var(--text);
-            font-family: system-ui
+            white-space: nowrap
         }
 
-        #logo span {
-            color: var(--gold)
+        #logo em {
+            color: var(--gold);
+            font-style: normal
         }
 
         #table-wrap {
             flex: 1;
-            position: relative;
             min-height: 0;
-            border-radius: 16px;
-            overflow: hidden
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            overflow: hidden;
         }
 
         #gc {
             display: block;
-            width: 100%;
-            height: 100%;
+            touch-action: none;
             cursor: crosshair;
-            touch-action: none
+        }
+
+        #controls {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--hud);
+            border-top: .5px solid var(--border);
+            padding: 8px 12px;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+        }
+
+        #pwr-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0
+        }
+
+        #pwr-lbl {
+            font-size: 10px;
+            color: var(--muted);
+            white-space: nowrap;
+            flex-shrink: 0
+        }
+
+        #pwr-track {
+            flex: 1;
+            height: 44px;
+            position: relative;
+            cursor: pointer;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        #pwr-bar {
+            width: 100%;
+            height: 7px;
+            border-radius: 3.5px;
+            background: rgba(255, 255, 255, .1);
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        #pwr-fill {
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
+            border-radius: 3.5px;
+        }
+
+        #pwr-knob {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2.5px solid var(--bg);
+            box-shadow: 0 0 10px rgba(245, 200, 66, .55);
+            pointer-events: none;
+        }
+
+        #pwr-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold);
+            min-width: 34px;
+            text-align: right;
+            flex-shrink: 0
+        }
+
+        .pbtn {
+            width: 42px;
+            height: 42px;
+            border-radius: 9px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, .07);
+            border: .5px solid var(--border);
+            color: var(--text);
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            transition: background .1s;
+        }
+
+        .pbtn:active {
+            background: rgba(255, 255, 255, .22)
+        }
+
+        #btn-shoot {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: none;
+            color: #111;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 16px rgba(245, 200, 66, .45);
+            transition: transform .1s, background .1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #btn-shoot:active {
+            transform: scale(.92);
+            background: #e0b530
+        }
+
+        #btn-shoot.disabled {
+            opacity: .35;
+            pointer-events: none
+        }
+
+        #btn-restart {
+            flex-shrink: 0;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, .07);
+            border: .5px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 12px;
+            cursor: pointer;
+            transition: background .12s;
+            white-space: nowrap;
+        }
+
+        #btn-restart:active {
+            background: rgba(255, 255, 255, .2)
+        }
+
+        #turn-ring {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, .2);
+            transition: background .3s;
         }
 
         #msg-overlay {
@@ -127,25 +355,27 @@
             align-items: center;
             justify-content: center;
             pointer-events: none;
-            gap: 6px
+            gap: 8px;
+            z-index: 20;
         }
 
         #msg-main {
-            font-size: clamp(18px, 4vw, 28px);
+            font-size: clamp(20px, 6vw, 34px);
             font-weight: 900;
-            font-family: system-ui;
             color: var(--gold);
-            text-shadow: 0 0 24px rgba(245, 200, 66, .7);
+            text-shadow: 0 0 28px rgba(245, 200, 66, .7);
             opacity: 0;
-            transition: opacity .2s
+            transition: opacity .2s;
+            text-align: center;
+            padding: 0 20px;
         }
 
         #msg-sub {
-            font-size: clamp(12px, 2.5vw, 16px);
+            font-size: clamp(13px, 3.5vw, 18px);
             color: var(--text);
-            font-family: system-ui;
             opacity: 0;
-            transition: opacity .2s
+            transition: opacity .2s;
+            text-align: center
         }
 
         #msg-main.show,
@@ -155,140 +385,88 @@
 
         #foul-badge {
             position: absolute;
-            top: 12px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--red);
             color: #fff;
             font-size: 12px;
             font-weight: 700;
-            font-family: system-ui;
-            padding: 4px 14px;
+            padding: 5px 16px;
             border-radius: 20px;
             opacity: 0;
             transition: opacity .3s;
             pointer-events: none;
-            white-space: nowrap
+            white-space: nowrap;
+            z-index: 21;
         }
 
         #foul-badge.show {
             opacity: 1
         }
 
-        #bottom-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--hud-bg);
-            border: .5px solid var(--hud-border);
-            border-radius: var(--r);
-            padding: 7px 12px;
-            flex-shrink: 0
-        }
-
-        #power-label {
-            font-size: 11px;
-            color: var(--muted);
-            font-family: system-ui;
-            white-space: nowrap
-        }
-
-        #power-track {
-            flex: 1;
-            height: 6px;
-            background: rgba(255, 255, 255, .1);
-            border-radius: 3px;
-            overflow: hidden;
-            cursor: pointer;
-            position: relative
-        }
-
-        #power-fill {
-            height: 100%;
-            width: 50%;
-            background: linear-gradient(90deg, #7df9a1, var(--gold), var(--red));
-            border-radius: 3px;
-            transition: width .05s;
-            pointer-events: none
-        }
-
-        #power-val {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--gold);
-            font-family: system-ui;
-            min-width: 34px;
-            text-align: right
-        }
-
-        #btn-restart {
-            background: rgba(255, 255, 255, .06);
-            border: .5px solid var(--hud-border);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: system-ui;
-            font-size: 12px;
-            padding: 5px 12px;
-            cursor: pointer;
-            transition: background .15s
-        }
-
-        #btn-restart:hover {
-            background: rgba(255, 255, 255, .12)
-        }
-
-        #turn-ring {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, .2);
-            flex-shrink: 0;
-            transition: background .3s
-        }
-
         @media(max-width:480px) {
-            #app {
-                padding: 6px;
-                gap: 5px
-            }
-
-            .stat-val {
-                font-size: 15px
-            }
-
             #hud {
-                padding: 6px 10px
+                padding: 5px 10px
             }
 
-            #bottom-bar {
-                padding: 6px 10px
+            .stat-n {
+                font-size: 16px
+            }
+
+            #controls {
+                gap: 6px;
+                padding: 7px 10px
+            }
+
+            #pwr-lbl {
+                display: none
+            }
+        }
+
+        @media(max-width:360px) {
+            .stat-n {
+                font-size: 14px
+            }
+
+            .hud-group {
+                gap: 10px
             }
         }
     </style>
 </head>
 
 <body>
+
+    <!-- ROTATE OVERLAY -->
+    <div id="rotate-overlay">
+        <span class="rotate-icon">📱</span>
+        <div class="rotate-arrows">↺</div>
+        <div class="rotate-text">Rotate The Phone</div>
+        <div class="rotate-sub">To play, hold the phone horizontally.</div>
+    </div>
+
     <div id="app">
         <div id="hud">
-            <div id="logo">🎱 <span>Billiards</span></div>
+            <div id="logo">🎱 <em>Billiards</em></div>
             <div class="hud-group">
                 <div class="stat">
-                    <div class="stat-label">P1 Score</div>
-                    <div class="stat-val" id="p1score">0</div>
+                    <div class="stat-lbl">P1</div>
+                    <div class="stat-n" id="p1s">0</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label">P2 Score</div>
-                    <div class="stat-val white" id="p2score">0</div>
+                    <div class="stat-lbl">P2</div>
+                    <div class="stat-n w" id="p2s">0</div>
                 </div>
             </div>
             <div class="hud-group">
                 <div class="stat">
-                    <div class="stat-label">Turn</div>
-                    <div class="stat-val green" id="turn-label">P1</div>
+                    <div class="stat-lbl">Turn</div>
+                    <div class="stat-n g" id="turn-lbl">P1</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label">Balls Left</div>
-                    <div class="stat-val" id="balls-left">15</div>
+                    <div class="stat-lbl">Left</div>
+                    <div class="stat-n" id="balls-left">15</div>
                 </div>
             </div>
         </div>
@@ -300,72 +478,104 @@
             </div>
             <div id="foul-badge">⚠ FOUL — Cue ball reset</div>
         </div>
-        <div id="bottom-bar">
+        <div id="controls">
             <div id="turn-ring"></div>
-            <span id="power-label">Power</span>
-            <div id="power-track">
-                <div id="power-fill"></div>
+            <div id="pwr-wrap">
+                <span id="pwr-lbl">Power</span>
+                <button class="pbtn" id="btn-minus">−</button>
+                <div id="pwr-track">
+                    <div id="pwr-bar">
+                        <div id="pwr-fill"></div>
+                    </div>
+                    <div id="pwr-knob"></div>
+                </div>
+                <button class="pbtn" id="btn-plus">+</button>
+                <span id="pwr-val">50%</span>
             </div>
-            <span id="power-val">50%</span>
-            <button id="btn-restart" onclick="initGame()">↺ New Game</button>
+            <button id="btn-shoot">🎱</button>
+            <button id="btn-restart" onclick="initGame()">↺</button>
         </div>
     </div>
 
     <script>
-        /* ═══════════════════════════════════════════════════════════
-           PHOTO CONFIG — فقط همین دو خط رو عوض کن
-           ═══════════════════════════════════════════════════════════
-        
-           CUE_BALL_PHOTO  → عکس روی توپ سفید
-           TABLE_PHOTO     → عکس زمین (جایگزین فلت سبز)
-        
-           مقادیر ممکن:
-             null                          ← پیش‌فرض (بدون عکس)
-             'P2.jpg'                      ← فایل کنار همین HTML
-             'https://example.com/x.jpg'  ← لینک اینترنتی
-             'data:image/jpeg;base64,...'  ← base64
-        
-           ─────────────────────────────────────────────────────────── */
-        const CUE_BALL_PHOTO = null;
-        const TABLE_PHOTO = 'P2.jpg';   // ← عکس زمین
-        /* ═══════════════════════════════════════════════════════════ */
+        // ── orientation ──────────────────────────────────────────────────────
+        const rotateOverlay = document.getElementById('rotate-overlay');
 
+        function isMobileDevice() {
+            return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 900;
+        }
+
+        function checkOrientation() {
+            if (!isMobileDevice()) { rotateOverlay.classList.remove('show'); return; }
+            const isPortrait = window.innerHeight > window.innerWidth;
+            if (isPortrait) rotateOverlay.classList.add('show');
+            else rotateOverlay.classList.remove('show');
+        }
+
+        async function forceLandscape() {
+            if (!isMobileDevice()) return;
+            try {
+                if (screen.orientation && screen.orientation.lock)
+                    await screen.orientation.lock("landscape");
+            } catch (e) { checkOrientation(); }
+        }
+
+        window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 200));
+        checkOrientation();
+
+        // ── photo config ─────────────────────────────────────────────────────
+        const CUE_BALL_PHOTO = null;
+        const TABLE_PHOTO = 'P2.jpg';
+
+        // ── canvas ───────────────────────────────────────────────────────────
         const canvas = document.getElementById('gc');
         const ctx = canvas.getContext('2d');
-        let W, H, sx, sy;
-        const BW = 800, BH = 440;
+        let W, H, sx, sy, BW = 1000, BH = 500;
+
+        function isMobile() { return window.innerWidth < 900; }
+
+        // Bigger balls & cue on mobile
+        function getBallR() { return isMobile() ? 22 : 13; }
+        function getCueBaseW() { return isMobile() ? 10 : 7; }
 
         function resize() {
             const wrap = document.getElementById('table-wrap');
-            W = wrap.clientWidth; H = wrap.clientHeight;
-            canvas.width = W; canvas.height = H;
-            sx = W / BW; sy = H / BH;
+            const ww = wrap.clientWidth, wh = wrap.clientHeight;
+            updateTableConsts();
+            const aspect = BW / BH;
+            let cw, ch;
+            if (ww / wh > aspect) { ch = wh; cw = Math.round(ch * aspect); }
+            else { cw = ww; ch = Math.round(cw / aspect); }
+            canvas.width = cw; canvas.height = ch;
+            canvas.style.width = cw + 'px'; canvas.style.height = ch + 'px';
+            W = cw; H = ch; sx = W / BW; sy = H / BH;
             if (!simRunning) drawScene();
         }
-        window.addEventListener('resize', resize);
+        window.addEventListener('resize', () => { checkOrientation(); resize(); });
 
-        const RAIL = 36;
-        const TW = BW - RAIL * 2;
-        const TH = BH - RAIL * 2;
-        const TX = RAIL;
-        const TY = RAIL;
+        // ── table constants ──────────────────────────────────────────────────
+        let RAIL, TW, TH, TX, TY, POCKETS;
         const POCKET_R = 26;
-        const BALL_R = 10;
         const FRICTION = 0.991;
         const MIN_SPEED = 0.06;
         const SPIN_DECAY = 0.93;
 
-        const POCKETS = [
-            { x: TX, y: TY },
-            { x: TX + TW / 2, y: TY - 4 },
-            { x: TX + TW, y: TY },
-            { x: TX, y: TY + TH },
-            { x: TX + TW / 2, y: TY + TH + 4 },
-            { x: TX + TW, y: TY + TH },
-        ];
+        function updateTableConsts() {
+            RAIL = 36; TW = BW - RAIL * 2; TH = BH - RAIL * 2; TX = RAIL; TY = RAIL;
+            POCKETS = [
+                { x: TX, y: TY },
+                { x: TX + TW / 2, y: TY - 4 },
+                { x: TX + TW, y: TY },
+                { x: TX, y: TY + TH },
+                { x: TX + TW / 2, y: TY + TH + 4 },
+                { x: TX + TW, y: TY + TH },
+            ];
+        }
+        updateTableConsts();
 
+        // ── ball defs ────────────────────────────────────────────────────────
         const BALL_DEFS = [
-            { id: 0, label: 'CUE', color: '#f5f5f0', stripe: false },
+            { id: 0, label: '', color: '#f5f5f0', stripe: false },
             { id: 1, label: '1', color: '#f5c842', stripe: false },
             { id: 2, label: '2', color: '#1a5fbf', stripe: false },
             { id: 3, label: '3', color: '#d63030', stripe: false },
@@ -383,66 +593,55 @@
             { id: 15, label: '15', color: '#8b2222', stripe: true },
         ];
 
-        // ── preload photos ────────────────────────────────────────────
-        let cueMask = null;
-        let tableMask = null;
+        // ── photo masks ──────────────────────────────────────────────────────
+        let cueMask = null, tableMask = null;
 
-        function loadMask(src, size, cb) {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
+        function loadCircleMask(src, size, cb) {
+            const img = new Image(); img.crossOrigin = 'anonymous';
             img.onload = () => {
-                const c = document.createElement('canvas');
-                c.width = size; c.height = size;
+                const c = document.createElement('canvas'); c.width = c.height = size;
                 const cx = c.getContext('2d');
                 cx.beginPath(); cx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2); cx.clip();
-                const r = img.width / img.height;
-                let dw = size, dh = size;
+                const r = img.width / img.height; let dw = size, dh = size;
                 if (r > 1) dw = dh * r; else dh = dw / r;
-                cx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh);
-                cb(c);
+                cx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh); cb(c);
             };
-            img.onerror = () => console.warn('Could not load image:', src);
-            img.src = src;
+            img.onerror = () => console.warn('Not found:', src); img.src = src;
         }
-
-        function loadTableImage(src, cb) {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => cb(img);
-            img.onerror = () => console.warn('Could not load table image:', src);
-            img.src = src;
+        function loadImg(src, cb) {
+            const img = new Image(); img.crossOrigin = 'anonymous';
+            img.onload = () => cb(img); img.onerror = () => console.warn('Not found:', src); img.src = src;
         }
+        if (CUE_BALL_PHOTO) loadCircleMask(CUE_BALL_PHOTO, 80, c => { cueMask = c; drawScene(); });
+        if (TABLE_PHOTO) loadImg(TABLE_PHOTO, img => { tableMask = img; drawScene(); });
 
-        if (CUE_BALL_PHOTO) loadMask(CUE_BALL_PHOTO, 64, c => { cueMask = c; drawScene(); });
-        if (TABLE_PHOTO) loadTableImage(TABLE_PHOTO, img => { tableMask = img; drawScene(); });
-
-        // ── state ─────────────────────────────────────────────────────
+        // ── state ────────────────────────────────────────────────────────────
         let balls = [], simRunning = false, animFrame;
-        let power = 50, aimAngle = 0;
-        let mousePos = { x: BW / 2, y: BH / 2 };
+        let power = 50, aimAngle = Math.PI;
         let turn = 0, scores = [0, 0];
         let cuePocketed = false, shotFired = false;
         let msgTimer = null, foulTimer = null;
         let pocketedDuringShot = [];
 
-        // ── rack ──────────────────────────────────────────────────────
-        function BALL_DEF(id) { const d = BALL_DEFS[id]; return { id: d.id, label: d.label, color: d.color, stripe: d.stripe }; }
+        // ── rack ─────────────────────────────────────────────────────────────
+        function mkBall(id) { const d = BALL_DEFS[id]; return { id: d.id, label: d.label, color: d.color, stripe: d.stripe }; }
 
         function rackBalls() {
-            balls = [];
-            balls.push({ ...BALL_DEF(0), x: TX + TW * 0.25, y: TY + TH / 2, vx: 0, vy: 0, spin: 0, pocketed: false });
-            const rackX = TX + TW * 0.72, rackY = TY + TH / 2, d = BALL_R * 2.05;
+            const BR = getBallR(); balls = [];
+            balls.push({ ...mkBall(0), x: TX + TW * .25, y: TY + TH * .5, vx: 0, vy: 0, spin: 0, pocketed: false });
+            const rackX = TX + TW * .72, rackY = TY + TH * .5, d = BR * 2.05;
             const rack = [[1], [2, 9], [3, 8, 10], [4, 11, 12, 5], [6, 13, 14, 15, 7]];
             let ids = rack.flat();
             for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[ids[i], ids[j]] = [ids[j], ids[i]]; }
             let idx = 0;
             rack.forEach((row, ri) => {
-                const offX = ri * d * 0.866, offY = -(row.length - 1) * d / 2;
+                const rowLen = row.length;
                 row.forEach((_, ci) => {
                     const def = BALL_DEFS[ids[idx++]];
                     balls.push({
                         id: def.id, label: def.label, color: def.color, stripe: def.stripe,
-                        x: rackX + offX + (Math.random() - .5) * .3, y: rackY + offY + ci * d + (Math.random() - .5) * .3,
+                        x: rackX + ri * d * .866 + (Math.random() - .5) * .3,
+                        y: rackY + (ci - (rowLen - 1) / 2) * d + (Math.random() - .5) * .3,
                         vx: 0, vy: 0, spin: 0, pocketed: false
                     });
                 });
@@ -452,26 +651,24 @@
         function cueBall() { return balls.find(b => b.id === 0); }
         function activeBalls() { return balls.filter(b => !b.pocketed); }
 
-        // ── physics ───────────────────────────────────────────────────
+        // ── physics ──────────────────────────────────────────────────────────
         function stepPhysics() {
-            const ab = activeBalls();
+            const BR = getBallR(), ab = activeBalls();
             ab.forEach(b => {
-                b.x += b.vx; b.y += b.vy;
-                b.spin *= SPIN_DECAY;
+                b.x += b.vx; b.y += b.vy; b.spin *= SPIN_DECAY;
                 b.vx *= FRICTION; b.vy *= FRICTION;
-                if (Math.abs(b.vx) < MIN_SPEED * .1) b.vx = 0;
-                if (Math.abs(b.vy) < MIN_SPEED * .1) b.vy = 0;
+                if (Math.abs(b.vx) < MIN_SPEED * .1) b.vx = 0; if (Math.abs(b.vy) < MIN_SPEED * .1) b.vy = 0;
             });
             ab.forEach(b => {
-                const minX = TX + BALL_R, maxX = TX + TW - BALL_R, minY = TY + BALL_R, maxY = TY + TH - BALL_R;
+                const minX = TX + BR, maxX = TX + TW - BR, minY = TY + BR, maxY = TY + TH - BR;
                 if (b.x < minX) { b.x = minX; b.vx = Math.abs(b.vx) * .88; }
                 if (b.x > maxX) { b.x = maxX; b.vx = -Math.abs(b.vx) * .88; }
                 if (b.y < minY) { b.y = minY; b.vy = Math.abs(b.vy) * .88; }
                 if (b.y > maxY) { b.y = maxY; b.vy = -Math.abs(b.vy) * .88; }
             });
+            const minD = BR * 2;
             for (let i = 0; i < ab.length; i++) for (let j = i + 1; j < ab.length; j++) {
-                const a = ab[i], b = ab[j];
-                const dx = b.x - a.x, dy = b.y - a.y, dist = Math.sqrt(dx * dx + dy * dy), minD = BALL_R * 2;
+                const a = ab[i], b = ab[j], dx = b.x - a.x, dy = b.y - a.y, dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < minD && dist > .001) {
                     const nx = dx / dist, ny = dy / dist, ov = (minD - dist) / 2;
                     a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
@@ -489,124 +686,114 @@
             return out;
         }
 
-        // ── sim loop ──────────────────────────────────────────────────
-        function startSim() { simRunning = true; shotFired = true; pocketedDuringShot = []; runSim(); }
+        function startSim() { simRunning = true; shotFired = true; pocketedDuringShot = []; setShootBtn(false); runSim(); }
 
         function runSim() {
             pocketedDuringShot.push(...stepPhysics());
             const moving = activeBalls().some(b => Math.abs(b.vx) > MIN_SPEED || Math.abs(b.vy) > MIN_SPEED);
             drawScene();
             if (moving) animFrame = requestAnimationFrame(runSim);
-            else { simRunning = false; onShotComplete(); }
+            else { simRunning = false; setShootBtn(true); onShotComplete(); }
         }
 
         function onShotComplete() {
             cuePocketed = pocketedDuringShot.some(b => b.id === 0);
             const scored = pocketedDuringShot.filter(b => b.id !== 0);
             if (scored.length > 0) scores[turn] += scored.length;
-            let switchTurn = true;
-            if (cuePocketed) { showFoul('⚠ FOUL — Cue ball reset'); resetCueBall(); switchTurn = true; }
-            else if (scored.length > 0) { showMsg(scored.length > 1 ? `${scored.length}× Pocketed! 🎱` : 'Pocketed! 🎱', ''); switchTurn = false; }
+            let sw = true;
+            if (cuePocketed) { showFoul('⚠ FOUL — Cue ball reset'); resetCueBall(); sw = true; }
+            else if (scored.length > 0) { showMsg(scored.length > 1 ? `${scored.length}× Pocketed! 🎱` : 'Pocketed! 🎱', ''); sw = false; }
             const eight = balls.find(b => b.id === 8);
-            if (eight && eight.pocketed) { showMsg(`🏆 Player ${turn + 1} wins!`, 'New game?'); setTimeout(() => initGame(), 3500); return; }
-            const remaining = activeBalls().filter(b => b.id !== 0);
-            if (remaining.length === 0) { showMsg('🏆 Table cleared!', `P1 ${scores[0]} — P2 ${scores[1]}`); setTimeout(() => initGame(), 3500); return; }
-            if (switchTurn) turn = 1 - turn;
+            if (eight && eight.pocketed) { showMsg(`🏆 Player ${turn + 1} wins!`, ''); setTimeout(() => initGame(), 3200); return; }
+            const rem = activeBalls().filter(b => b.id !== 0);
+            if (rem.length === 0) { showMsg('🏆 Table cleared!', `P1 ${scores[0]} — P2 ${scores[1]}`); setTimeout(() => initGame(), 3200); return; }
+            if (sw) turn = 1 - turn;
             updateHUD(); drawScene();
         }
 
         function resetCueBall() {
             const cb = cueBall();
-            if (cb) { cb.pocketed = false; cb.x = TX + TW * .25; cb.y = TY + TH / 2; cb.vx = 0; cb.vy = 0; }
+            if (cb) { cb.pocketed = false; cb.x = TX + TW * .25; cb.y = TY + TH * .5; cb.vx = 0; cb.vy = 0; }
         }
 
-        // ── HUD ───────────────────────────────────────────────────────
+        // ── HUD ──────────────────────────────────────────────────────────────
         function updateHUD() {
-            document.getElementById('p1score').textContent = scores[0];
-            document.getElementById('p2score').textContent = scores[1];
-            document.getElementById('turn-label').textContent = `P${turn + 1}`;
+            document.getElementById('p1s').textContent = scores[0];
+            document.getElementById('p2s').textContent = scores[1];
+            document.getElementById('turn-lbl').textContent = `P${turn + 1}`;
             document.getElementById('balls-left').textContent = activeBalls().filter(b => b.id !== 0).length;
             document.getElementById('turn-ring').style.background = turn === 0 ? 'var(--gold)' : '#aaa';
         }
 
         function setPower(v) {
             power = Math.max(5, Math.min(100, v));
-            document.getElementById('power-fill').style.width = power + '%';
-            document.getElementById('power-val').textContent = power + '%';
+            document.getElementById('pwr-fill').style.width = power + '%';
+            document.getElementById('pwr-val').textContent = power + '%';
+            document.getElementById('pwr-knob').style.left = power + '%';
+        }
+
+        function setShootBtn(en) {
+            const btn = document.getElementById('btn-shoot');
+            if (en) btn.classList.remove('disabled'); else btn.classList.add('disabled');
         }
 
         function showMsg(main, sub) {
             const m = document.getElementById('msg-main'), s = document.getElementById('msg-sub');
-            m.textContent = main; s.textContent = sub;
-            m.classList.add('show'); s.classList.add('show');
-            clearTimeout(msgTimer);
-            msgTimer = setTimeout(() => { m.classList.remove('show'); s.classList.remove('show'); }, 2200);
-        }
-        function showFoul(txt) {
-            const el = document.getElementById('foul-badge');
-            el.textContent = txt; el.classList.add('show');
-            clearTimeout(foulTimer);
-            foulTimer = setTimeout(() => el.classList.remove('show'), 2000);
+            m.textContent = main; s.textContent = sub; m.classList.add('show'); s.classList.add('show');
+            clearTimeout(msgTimer); msgTimer = setTimeout(() => { m.classList.remove('show'); s.classList.remove('show'); }, 2400);
         }
 
-        // ── drawing ───────────────────────────────────────────────────
-        function hexToRgb(hex) { return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)]; }
-        function lighten(hex, a) { const [r, g, b] = hexToRgb(hex); return `rgb(${Math.min(255, r + a)},${Math.min(255, g + a)},${Math.min(255, b + a)})`; }
-        function darken(hex, a) { const [r, g, b] = hexToRgb(hex); return `rgb(${Math.max(0, r - a)},${Math.max(0, g - a)},${Math.max(0, b - a)})`; }
+        function showFoul(txt) {
+            const el = document.getElementById('foul-badge'); el.textContent = txt; el.classList.add('show');
+            clearTimeout(foulTimer); foulTimer = setTimeout(() => el.classList.remove('show'), 2200);
+        }
+
+        // ── draw helpers ─────────────────────────────────────────────────────
+        function hexRgb(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+        function lighten(h, a) { const [r, g, b] = hexRgb(h); return `rgb(${Math.min(255, r + a)},${Math.min(255, g + a)},${Math.min(255, b + a)})`; }
+        function darken(h, a) { const [r, g, b] = hexRgb(h); return `rgb(${Math.max(0, r - a)},${Math.max(0, g - a)},${Math.max(0, b - a)})`; }
 
         function drawTable() {
-            // rail wood
             const rg = ctx.createLinearGradient(0, 0, 0, H);
             rg.addColorStop(0, '#7a4520'); rg.addColorStop(.5, '#5c3317'); rg.addColorStop(1, '#3e2210');
             ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
-            ctx.strokeStyle = 'rgba(255,200,100,0.15)'; ctx.lineWidth = 1;
-            const ins = 6 * sx; ctx.strokeRect(ins, ins, W - ins * 2, H - ins * 2);
-
+            ctx.strokeStyle = 'rgba(255,200,100,0.13)'; ctx.lineWidth = 1;
+            const ins = 5 * Math.min(sx, sy); ctx.strokeRect(ins, ins, W - ins * 2, H - ins * 2);
             const fx = TX * sx, fy = TY * sy, fw = TW * sx, fh = TH * sy;
-
             if (tableMask) {
-                // عکس زمین — کشیده شده روی felt area
-                ctx.save();
-                ctx.drawImage(tableMask, fx, fy, fw, fh);
-                // یه لایه شفاف روش تا توپا بهتر دیده بشن
-                ctx.fillStyle = 'rgba(0,60,20,0.22)';
-                ctx.fillRect(fx, fy, fw, fh);
-                ctx.restore();
+                ctx.save(); ctx.drawImage(tableMask, fx, fy, fw, fh);
+                ctx.fillStyle = 'rgba(0,50,15,0.25)'; ctx.fillRect(fx, fy, fw, fh); ctx.restore();
             } else {
-                // پیش‌فرض: felt سبز
                 const fg = ctx.createRadialGradient(fx + fw / 2, fy + fh / 2, 0, fx + fw / 2, fy + fh / 2, Math.max(fw, fh) * .7);
                 fg.addColorStop(0, '#1e7a46'); fg.addColorStop(1, '#155535');
                 ctx.fillStyle = fg; ctx.fillRect(fx, fy, fw, fh);
-                ctx.strokeStyle = 'rgba(255,255,255,0.025)'; ctx.lineWidth = 1;
-                for (let gy = TY; gy < TY + TH; gy += 12) { ctx.beginPath(); ctx.moveTo(fx, gy * sy); ctx.lineTo(fx + fw, gy * sy); ctx.stroke(); }
+                ctx.strokeStyle = 'rgba(255,255,255,.025)'; ctx.lineWidth = 1;
+                for (let g = TY; g < TY + TH; g += 12) { ctx.beginPath(); ctx.moveTo(fx, g * sy); ctx.lineTo(fx + fw, g * sy); ctx.stroke(); }
             }
-
-            // baulk line + D
-            const bx = (TX + TW * .25) * sx;
-            ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(bx, TY * sy); ctx.lineTo(bx, (TY + TH) * sy); ctx.stroke();
-            ctx.beginPath(); ctx.arc(bx, (TY + TH / 2) * sy, TH * .18 * sy, -Math.PI / 2, Math.PI / 2); ctx.stroke();
-            ctx.fillStyle = 'rgba(255,255,255,0.18)';
+            ctx.strokeStyle = 'rgba(255,255,255,0.11)'; ctx.lineWidth = 1;
+            const blx = (TX + TW * .25) * sx;
+            ctx.beginPath(); ctx.moveTo(blx, TY * sy); ctx.lineTo(blx, (TY + TH) * sy); ctx.stroke();
+            ctx.beginPath(); ctx.arc(blx, (TY + TH / 2) * sy, TH * .18 * sy, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+            ctx.fillStyle = 'rgba(255,255,255,.18)';
             ctx.beginPath(); ctx.arc((TX + TW * .72) * sx, (TY + TH / 2) * sy, 2.5, 0, Math.PI * 2); ctx.fill();
         }
 
         function drawPockets() {
             POCKETS.forEach(p => {
-                const px = p.x * sx, py = p.y * sy, pr = POCKET_R * sx;
-                ctx.fillStyle = '#1a0e06';
-                ctx.beginPath(); ctx.arc(px, py, pr * 1.25, 0, Math.PI * 2); ctx.fill();
+                const px = p.x * sx, py = p.y * sy, pr = POCKET_R * Math.min(sx, sy);
+                ctx.fillStyle = '#1a0e06'; ctx.beginPath(); ctx.arc(px, py, pr * 1.3, 0, Math.PI * 2); ctx.fill();
                 const pg = ctx.createRadialGradient(px, py, 0, px, py, pr);
                 pg.addColorStop(0, '#000'); pg.addColorStop(1, '#0d0a06');
                 ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = 'rgba(255,180,60,0.25)'; ctx.lineWidth = 1.5;
-                ctx.beginPath(); ctx.arc(px, py, pr * 1.1, 0, Math.PI * 2); ctx.stroke();
+                ctx.strokeStyle = 'rgba(255,180,60,0.22)'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(px, py, pr * 1.12, 0, Math.PI * 2); ctx.stroke();
             });
         }
 
         function drawBall(b) {
-            const bx = b.x * sx, by = b.y * sy, br = BALL_R * sx;
-            ctx.save(); ctx.globalAlpha = .35; ctx.fillStyle = '#000';
-            ctx.beginPath(); ctx.ellipse(bx + br * .25, by + br * .35, br * .85, br * .45, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+            const BR = getBallR(), bx = b.x * sx, by = b.y * sy, br = BR * Math.min(sx, sy);
+            ctx.save(); ctx.globalAlpha = .32; ctx.fillStyle = '#000';
+            ctx.beginPath(); ctx.ellipse(bx + br * .22, by + br * .32, br * .8, br * .42, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
             ctx.save(); ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.clip();
             if (b.id === 0 && cueMask) {
                 ctx.drawImage(cueMask, bx - br, by - br, br * 2, br * 2);
@@ -614,51 +801,55 @@
                 ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 1.5; ctx.stroke();
             } else if (b.stripe) {
                 ctx.fillStyle = '#f5f5f0'; ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = b.color; ctx.fillRect(bx - br, by - br * .45, br * 2, br * .9);
+                ctx.fillStyle = b.color; ctx.fillRect(bx - br, by - br * .44, br * 2, br * .88);
             } else {
-                const bg = ctx.createRadialGradient(bx - br * .3, by - br * .3, br * .05, bx, by, br);
-                bg.addColorStop(0, lighten(b.color, 40)); bg.addColorStop(.6, b.color); bg.addColorStop(1, darken(b.color, 40));
+                const bg = ctx.createRadialGradient(bx - br * .28, by - br * .28, br * .04, bx, by, br);
+                bg.addColorStop(0, lighten(b.color, 42)); bg.addColorStop(.6, b.color); bg.addColorStop(1, darken(b.color, 42));
                 ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
             }
             if (b.id !== 0) {
-                const lbg = b.stripe ? b.color : '#fff', lfg = b.stripe ? '#fff' : '#222', lr = br * .46;
+                const lbg = b.stripe ? b.color : '#fff', lfg = b.stripe ? '#fff' : '#222', lr = br * .45;
                 ctx.fillStyle = lbg; ctx.beginPath(); ctx.arc(bx, by, lr, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = lfg; ctx.font = `bold ${Math.max(7, br * .55)}px system-ui`;
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(b.label, bx, by + .5);
+                ctx.fillStyle = lfg; ctx.font = `bold ${Math.max(8, br * .56)}px system-ui`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(b.label, bx, by + .5);
             }
             ctx.restore();
             ctx.save(); ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.clip();
-            const sg = ctx.createRadialGradient(bx - br * .38, by - br * .38, 0, bx, by, br);
-            sg.addColorStop(0, 'rgba(255,255,255,.55)'); sg.addColorStop(.35, 'rgba(255,255,255,.05)'); sg.addColorStop(1, 'rgba(0,0,0,0)');
+            const sg = ctx.createRadialGradient(bx - br * .36, by - br * .36, 0, bx, by, br);
+            sg.addColorStop(0, 'rgba(255,255,255,.55)'); sg.addColorStop(.3, 'rgba(255,255,255,.05)'); sg.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill(); ctx.restore();
         }
 
         function drawCue() {
             if (simRunning) return;
             const cb = cueBall(); if (!cb || cb.pocketed) return;
-            const bx = cb.x * sx, by = cb.y * sy, cueLen = 260 * sx, cueGap = (BALL_R + 4) * sx;
-            const cos = Math.cos(aimAngle + Math.PI), sin = Math.sin(aimAngle + Math.PI);
+            const BR = getBallR(), bx = cb.x * sx, by = cb.y * sy, br = BR * Math.min(sx, sy);
+            const cueLen = 320 * Math.min(sx, sy), cueGap = (BR + 4) * Math.min(sx, sy);
+            const baseW = getCueBaseW() * Math.min(sx, sy);
+            const ca = aimAngle + Math.PI, cos = Math.cos(ca), sin = Math.sin(ca);
             const sx1 = bx + cos * cueGap, sy1 = by + sin * cueGap;
             const ex = bx + cos * (cueGap + cueLen), ey = by + sin * (cueGap + cueLen);
             const cg = ctx.createLinearGradient(sx1, sy1, ex, ey);
             cg.addColorStop(0, '#a07828'); cg.addColorStop(.1, '#d4a055'); cg.addColorStop(.85, '#c8943e'); cg.addColorStop(1, '#8a6020');
-            ctx.save(); ctx.strokeStyle = cg; ctx.lineWidth = Math.max(2, 4 * sx); ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(ex, ey); ctx.stroke();
-            ctx.strokeStyle = '#7ecfff'; ctx.lineWidth = Math.max(2, 4 * sx);
-            ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(sx1 + cos * 6 * sx, sy1 + sin * 6 * sx); ctx.stroke(); ctx.restore();
-            const ds = BALL_R * 2.2 * sx, adx = Math.cos(aimAngle), ady = Math.sin(aimAngle);
             ctx.save();
-            for (let i = 1; i <= 6; i++) {
-                ctx.globalAlpha = .18 - i * .025; ctx.fillStyle = '#f5f5f0';
-                ctx.beginPath(); ctx.arc(bx + adx * ds * i, by + ady * ds * i, Math.max(1.5, 3 * sx * (1 - i * .1)), 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = cg; ctx.lineWidth = Math.max(4, baseW); ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(ex, ey); ctx.stroke();
+            ctx.strokeStyle = '#7ecfff'; ctx.lineWidth = Math.max(2.5, baseW * .65);
+            ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(sx1 + cos * 7 * Math.min(sx, sy), sy1 + sin * 7 * Math.min(sx, sy)); ctx.stroke();
+            ctx.restore();
+            const ds = BR * 2.3 * Math.min(sx, sy), adx = Math.cos(aimAngle), ady = Math.sin(aimAngle);
+            ctx.save();
+            for (let i = 1; i <= 7; i++) {
+                ctx.globalAlpha = .2 - i * .022; ctx.fillStyle = '#f5f5f0';
+                ctx.beginPath(); ctx.arc(bx + adx * ds * i, by + ady * ds * i, Math.max(2, 3.5 * Math.min(sx, sy) * (1 - i * .08)), 0, Math.PI * 2); ctx.fill();
             }
             ctx.restore();
-            const arcR = (BALL_R + 10) * sx, sweep = (power / 100) * Math.PI * 1.5, arcStart = aimAngle + Math.PI / 2;
+            const arcR = (BR + 12) * Math.min(sx, sy), sweep = (power / 100) * Math.PI * 1.5;
             ctx.save();
-            ctx.strokeStyle = power > 70 ? 'rgba(230,57,70,.7)' : power > 40 ? 'rgba(245,200,66,.6)' : 'rgba(125,249,161,.55)';
-            ctx.lineWidth = 2.5 * sx; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.arc(bx, by, arcR, arcStart, arcStart + sweep); ctx.stroke(); ctx.restore();
+            ctx.strokeStyle = power > 70 ? 'rgba(230,57,70,.75)' : power > 40 ? 'rgba(245,200,66,.65)' : 'rgba(125,249,161,.6)';
+            ctx.lineWidth = 3 * Math.min(sx, sy); ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.arc(bx, by, arcR, aimAngle + Math.PI / 2, aimAngle + Math.PI / 2 + sweep); ctx.stroke();
+            ctx.restore();
         }
 
         function drawScene() {
@@ -668,40 +859,77 @@
             if (cb && !cb.pocketed) { drawCue(); drawBall(cb); }
         }
 
-        // ── input ─────────────────────────────────────────────────────
-        function toBase(e) {
+        // ── input ────────────────────────────────────────────────────────────
+        canvas.addEventListener('mousemove', e => {
+            if (simRunning) return;
+            const cb = cueBall(); if (!cb || cb.pocketed) return;
             const r = canvas.getBoundingClientRect();
-            return {
-                x: ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / sx,
-                y: ((e.touches ? e.touches[0].clientY : e.clientY) - r.top) / sy
-            };
+            const mx = (e.clientX - r.left) / sx, my = (e.clientY - r.top) / sy;
+            aimAngle = Math.atan2(my - cb.y, mx - cb.x); drawScene();
+        });
+
+        canvas.addEventListener('touchstart', e => {
+            if (simRunning) return;
+            const cb = cueBall(); if (!cb || cb.pocketed) return;
+            const t = e.touches[0], r = canvas.getBoundingClientRect();
+            aimAngle = Math.atan2((t.clientY - r.top) / sy - cb.y, (t.clientX - r.left) / sx - cb.x); drawScene();
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault(); if (simRunning) return;
+            const cb = cueBall(); if (!cb || cb.pocketed) return;
+            const t = e.touches[0], r = canvas.getBoundingClientRect();
+            aimAngle = Math.atan2((t.clientY - r.top) / sy - cb.y, (t.clientX - r.left) / sx - cb.x); drawScene();
+        }, { passive: false });
+
+        canvas.addEventListener('click', () => { if (!simRunning) fireShot(); });
+
+        function fireShot() {
+            if (simRunning) return;
+            const cb = cueBall(); if (!cb || cb.pocketed) return;
+            const spd = (power / 100) * 36;
+            cb.vx = Math.cos(aimAngle) * spd; cb.vy = Math.sin(aimAngle) * spd;
+            startSim();
         }
-        function updateAim(bx, by) { const cb = cueBall(); if (!cb || cb.pocketed) return; aimAngle = Math.atan2(by - cb.y, bx - cb.x); drawScene(); }
-        function fireShot() { if (simRunning) return; const cb = cueBall(); if (!cb || cb.pocketed) return; const spd = (power / 100) * 36; cb.vx = Math.cos(aimAngle) * spd; cb.vy = Math.sin(aimAngle) * spd; startSim(); }
 
-        canvas.addEventListener('mousemove', e => { if (simRunning) return; const p = toBase(e); mousePos = p; updateAim(p.x, p.y); });
-        canvas.addEventListener('click', e => { if (!simRunning) fireShot(); });
+        document.getElementById('btn-shoot').addEventListener('click', () => fireShot());
+        document.getElementById('btn-shoot').addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); fireShot(); }, { passive: false });
 
-        let touchMoved = false;
-        canvas.addEventListener('touchstart', e => { e.preventDefault(); touchMoved = false; }, { passive: false });
-        canvas.addEventListener('touchmove', e => { e.preventDefault(); touchMoved = true; const p = toBase(e); updateAim(p.x, p.y); }, { passive: false });
-        canvas.addEventListener('touchend', e => { e.preventDefault(); if (!touchMoved && !simRunning) fireShot(); }, { passive: false });
+        const pwrTrack = document.getElementById('pwr-track');
+        function ptrFromEvent(e) {
+            const r = pwrTrack.getBoundingClientRect();
+            return Math.round(((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width * 100);
+        }
+        pwrTrack.addEventListener('mousedown', e => {
+            setPower(ptrFromEvent(e));
+            const mv = f => setPower(ptrFromEvent(f));
+            const up = () => { window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up); };
+            window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
+        });
+        pwrTrack.addEventListener('touchstart', e => { e.stopPropagation(); setPower(ptrFromEvent(e)); }, { passive: false });
+        pwrTrack.addEventListener('touchmove', e => { e.stopPropagation(); setPower(ptrFromEvent(e)); }, { passive: false });
+        document.getElementById('btn-minus').addEventListener('click', () => setPower(power - 10));
+        document.getElementById('btn-plus').addEventListener('click', () => setPower(power + 10));
+        document.getElementById('btn-minus').addEventListener('touchstart', e => { e.preventDefault(); setPower(power - 10); }, { passive: false });
+        document.getElementById('btn-plus').addEventListener('touchstart', e => { e.preventDefault(); setPower(power + 10); }, { passive: false });
 
-        const powerTrack = document.getElementById('power-track');
-        function setFromTrack(e) { const r = powerTrack.getBoundingClientRect(); setPower(Math.round(((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width * 100)); }
-        powerTrack.addEventListener('click', setFromTrack);
-        powerTrack.addEventListener('mousedown', e => { setFromTrack(e); const mv = f => setFromTrack(f), up = () => { window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up); }; window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up); });
-        powerTrack.addEventListener('touchstart', e => { e.stopPropagation(); setFromTrack(e); }, { passive: false });
-        powerTrack.addEventListener('touchmove', e => { e.stopPropagation(); setFromTrack(e); }, { passive: false });
-        window.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); fireShot(); } if (e.code === 'ArrowUp' || e.key === '+') setPower(power + 5); if (e.code === 'ArrowDown' || e.key === '-') setPower(power - 5); });
+        window.addEventListener('keydown', e => {
+            if (e.code === 'Space') { e.preventDefault(); fireShot(); }
+            if (e.code === 'ArrowUp' || e.key === '+') setPower(power + 5);
+            if (e.code === 'ArrowDown' || e.key === '-') setPower(power - 5);
+            if (e.code === 'ArrowLeft') aimAngle -= 0.05;
+            if (e.code === 'ArrowRight') aimAngle += 0.05;
+            drawScene();
+        });
 
-        // ── init ──────────────────────────────────────────────────────
+        // ── init ─────────────────────────────────────────────────────────────
         function initGame() {
             cancelAnimationFrame(animFrame); simRunning = false;
-            turn = 0; scores = [0, 0]; cuePocketed = false; shotFired = false;
-            rackBalls(); setPower(50); updateHUD(); drawScene();
+            turn = 0; scores = [0, 0]; cuePocketed = false; shotFired = false; aimAngle = Math.PI;
+            rackBalls(); setPower(50); updateHUD(); setShootBtn(true); drawScene();
             document.getElementById('msg-main').classList.remove('show');
             document.getElementById('msg-sub').classList.remove('show');
+            forceLandscape();
         }
 
         resize();
