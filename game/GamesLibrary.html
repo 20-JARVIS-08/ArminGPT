@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arcade — Pick Your Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0c0c0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(255, 255, 255, 0.16);
+            --text: #f0eefc;
+            --muted: #7b7a9e;
+            --green: #1d9e75;
+            --green-light: #5DCAA5;
+            --green-bg: rgba(29, 158, 117, 0.12);
+            --blue: #378ADD;
+            --blue-light: #85B7EB;
+            --blue-bg: rgba(55, 138, 221, 0.12);
+            --purple: #7F77DD;
+            --purple-bg: rgba(127, 119, 221, 0.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* NAV */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 60px;
+            background: rgba(12, 12, 15, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: var(--purple);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 13px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            background: var(--surface2);
+            border: 1px solid var(--border-hover);
+            padding: 7px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .nav-cta:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 5rem 1.5rem 4rem;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--purple);
+            background: var(--purple-bg);
+            border: 1px solid rgba(127, 119, 221, 0.25);
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--purple);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 6vw, 3.2rem);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        h1 em {
+            font-style: normal;
+            color: var(--purple);
+        }
+
+        .hero-sub {
+            font-size: 15px;
+            color: var(--muted);
+            max-width: 380px;
+            margin: 0 auto;
+        }
+
+        /* DIVIDER */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 820px;
+            margin: 0 auto 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider span {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        /* CARDS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 1.5rem 5rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+        }
+
+        .card:active {
+            transform: scale(0.99);
+        }
+
+        /* THUMBNAILS */
+        .thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .thumb-billiard {
+            background: #0d3a1e;
+        }
+
+        .thumb-mario {
+            background: #0c2659;
+        }
+
+        /* Billiard SVG scene */
+        .billiard-svg,
+        .mario-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* CARD BODY */
+        .card-body {
+            padding: 1.25rem 1.5rem 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .icon-g {
+            background: var(--green-bg);
+            color: var(--green-light);
+        }
+
+        .icon-b {
+            background: var(--blue-bg);
+            color: var(--blue-light);
+        }
+
+        .badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .badge-green {
+            background: var(--green-bg);
+            color: var(--green-light);
+            border: 1px solid rgba(29, 158, 117, 0.25);
+        }
+
+        .badge-blue {
+            background: var(--blue-bg);
+            color: var(--blue-light);
+            border: 1px solid rgba(55, 138, 221, 0.25);
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            margin-top: 4px;
+        }
+
+        .card-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .play-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--bg);
+            background: var(--text);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.15s;
+        }
+
+        .play-btn:hover {
+            opacity: 0.88;
+        }
+
+        .play-btn svg {
+            width: 13px;
+            height: 13px;
+            fill: var(--bg);
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 3rem 1.25rem 2.5rem;
+            }
+
+            .cards {
+                padding: 0 1.25rem 3rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .card,
+            .play-btn {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+        <section class="hero">
+            <div class="eyebrow">2 games available</div>
+            <h1>Pick your <em>game</em> and start playing</h1>
+        </section>
+
+        <div class="divider"><span>choose a game</span></div>
+
+        <div class="cards">
+
+            <!-- BILLIARD CARD -->
+            <a class="card" href="billiard.html">
+                <div class="thumb thumb-billiard">
+                    <svg class="billiard-svg" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                        <!-- table felt -->
+                        <rect x="30" y="25" width="340" height="175" rx="14" fill="#1a6e35" />
+                        <!-- cushions -->
+                        <rect x="30" y="25" width="340" height="175" rx="14" fill="none" stroke="#8B6014"
+                            stroke-width="10" />
+                        <!-- felt inner shadow -->
+                        <rect x="46" y="41" width="308" height="143" rx="8" fill="none" stroke="rgba(0,0,0,0.2)"
+                            stroke-width="2" />
+                        <!-- pockets -->
+                        <circle cx="40" cy="35" r="9" fill="#080f0a" />
+                        <circle cx="360" cy="35" r="9" fill="#080f0a" />
+                        <circle cx="40" cy="190" r="9" fill="#080f0a" />
+                        <circle cx="360" cy="190" r="9" fill="#080f0a" />
+                        <circle cx="200" cy="30" r="8" fill="#080f0a" />
+                        <circle cx="200" cy="195" r="8" fill="#080f0a" />
+                        <!-- cue stick -->
+                        <line x1="55" y1="120" x2="185" y2="113" stroke="#c8922a" stroke-width="5"
+                            stroke-linecap="round" />
+                        <rect x="50" y="117" width="7" height="6" rx="1" fill="#7ecde0" />
+                        <!-- cue ball -->
+                        <circle cx="195" cy="112" r="13" fill="#f0f0f0" stroke="#d0d0d0" stroke-width="1.5" />
+                        <!-- colored balls -->
+                        <circle cx="240" cy="100" r="11" fill="#f7ca18" stroke="#c09a10" stroke-width="1.5" />
+                        <circle cx="265" cy="112" r="11" fill="#cc2200" stroke="#a01800" stroke-width="1.5" />
+                        <circle cx="240" cy="124" r="11" fill="#1a3cc9" stroke="#1228a0" stroke-width="1.5" />
+                        <circle cx="290" cy="100" r="11" fill="#7b2fbf" stroke="#5a1f90" stroke-width="1.5" />
+                        <circle cx="290" cy="124" r="11" fill="#e07820" stroke="#b05a10" stroke-width="1.5" />
+                        <circle cx="315" cy="112" r="11" fill="#2aaa2a" stroke="#186018" stroke-width="1.5" />
+                        <!-- ball stripes -->
+                        <text x="240" y="104" text-anchor="middle" fill="rgba(0,0,0,0.3)" font-size="7"
+                            font-family="monospace">1</text>
+                        <text x="265" y="116" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7"
+                            font-family="monospace">3</text>
+                    </svg>
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="card-icon icon-g">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </span>
+                            Billiard
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="play-btn" href="game.html">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                            Play
+                        </a>
+                    </div>
+                </div>
+            </a>
+
+            <!-- MARIO CARD -->
+            <a class="card" href="mario.html">
+                <div class="thumb thumb-mario">
+                    <svg class="mario-svg" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                        <!-- sky -->
+                        <rect width="400" height="225" fill="#0c2659" />
+                        <!-- stars -->
+                        <circle cx="60" cy="30" r="1.5" fill="white" opacity="0.6" />
+                        <circle cx="140" cy="18" r="1" fill="white" opacity="0.5" />
+                        <circle cx="230" cy="28" r="1.5" fill="white" opacity="0.7" />
+                        <circle cx="310" cy="15" r="1" fill="white" opacity="0.5" />
+                        <circle cx="370" cy="35" r="1.5" fill="white" opacity="0.6" />
+                        <!-- cloud 1 -->
+                        <rect x="40" y="40" width="60" height="22" rx="11" fill="#c8d4f0" opacity="0.9" />
+                        <rect x="50" y="30" width="40" height="22" rx="11" fill="#c8d4f0" opacity="0.9" />
+                        <!-- cloud 2 -->
+                        <rect x="240" y="52" width="44" height="18" rx="9" fill="#c8d4f0" opacity="0.8" />
+                        <rect x="248" y="43" width="28" height="18" rx="9" fill="#c8d4f0" opacity="0.8" />
+                        <!-- ground -->
+                        <rect x="0" y="175" width="400" height="50" fill="#5a3010" />
+                        <rect x="0" y="175" width="400" height="10" fill="#2eaa1a" />
+                        <!-- bricks -->
+                        <rect x="120" y="118" width="24" height="22" rx="3" fill="#c05010" stroke="#8a3008"
+                            stroke-width="1.5" />
+                        <rect x="150" y="118" width="24" height="22" rx="3" fill="#c05010" stroke="#8a3008"
+                            stroke-width="1.5" />
+                        <!-- ? block -->
+                        <rect x="88" y="118" width="26" height="26" rx="4" fill="#f8a820" stroke="#c07010"
+                            stroke-width="2" />
+                        <text x="101" y="136" text-anchor="middle" fill="#7a4000" font-size="15" font-family="monospace"
+                            font-weight="700">?</text>
+                        <!-- coin -->
+                        <circle cx="190" cy="86" r="9" fill="#f7ca18" stroke="#c09000" stroke-width="2" />
+                        <circle cx="220" cy="96" r="9" fill="#f7ca18" stroke="#c09000" stroke-width="2" />
+                        <!-- pipe -->
+                        <rect x="310" y="140" width="38" height="35" fill="#1e8a1e" stroke="#186018" stroke-width="2" />
+                        <rect x="304" y="130" width="50" height="14" rx="4" fill="#2eaa2e" stroke="#186018"
+                            stroke-width="2" />
+                        <!-- Mario character -->
+                        <!-- hat -->
+                        <rect x="55" y="122" width="28" height="10" rx="3" fill="#cc2200" />
+                        <rect x="59" y="132" width="20" height="14" rx="2" fill="#f5c090" />
+                        <rect x="55" y="146" width="28" height="12" rx="2" fill="#cc2200" />
+                        <rect x="52" y="158" width="12" height="9" rx="2" fill="#2244cc" />
+                        <rect x="71" y="158" width="12" height="9" rx="2" fill="#2244cc" />
+                        <!-- eyes -->
+                        <rect x="64" y="135" width="4" height="4" rx="1" fill="#1a0800" />
+                        <rect x="71" y="135" width="4" height="4" rx="1" fill="#1a0800" />
+                        <!-- mustache -->
+                        <rect x="60" y="141" width="18" height="3" rx="1.5" fill="#5a2a00" />
+                    </svg>
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="card-icon icon-b">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="13 17 18 12 13 7" />
+                                    <polyline points="6 17 11 12 6 7" />
+                                </svg>
+                            </span>
+                            Mario
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="play-btn" href="mario.html">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                            Play
+                        </a>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 &mdash; built for fun
+    </footer>
+
+</body>
+
+</html>
